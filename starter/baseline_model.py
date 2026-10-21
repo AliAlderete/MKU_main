@@ -55,13 +55,5 @@ def main():
     print("--- Standard Evaluation Output ---")
     for metric, value in baseline_metrics.items():
         print(f"{metric}: {value}")
-
-
-<<<<<<< HEAD
-print("--- Testing the triggering of CI actions ---")
-print("--- A ---")
-print("--- Testing the triggering of CI actions ---")
-=======
 if __name__ == "__main__":
     main()
->>>>>>> 2a48ca1 (	new file:   starter/__pycache__/baseline_model.cpython-314.pyc)
