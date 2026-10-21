@@ -63,5 +63,3 @@ for metric, value in baseline_metrics.items():
 
 
 print("--- Testing the triggering of CI actions ---")
-print("--- Testing the triggering of CI actions ---")
-print("--- Testing the triggering of CI actions ---")
