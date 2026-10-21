@@ -1,6 +1,8 @@
 import json
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 
+import joblib
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -16,6 +18,7 @@ EXPERIMENTS = (
     {"fit_intercept": False, "positive": False},
     {"fit_intercept": True, "positive": True},
 )
+ARTIFACT_PATH = Path("artifacts/best_model.joblib")
 
 
 def run_experiments(
@@ -58,6 +61,43 @@ def run_experiments(
     return results
 
 
+def train_best_model(
+    X: pd.DataFrame,
+    y: np.ndarray,
+    experiment_results: Sequence[Mapping[str, object]],
+    artifact_path: Path = ARTIFACT_PATH,
+) -> dict[str, object]:
+    best_experiment = min(
+        experiment_results,
+        key=lambda result: float(result["test_mean_squared_error"]),
+    )
+    parameters = best_experiment["parameters"]
+    if not isinstance(parameters, Mapping):
+        raise TypeError("Experiment parameters must be a mapping.")
+
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    model = LinearRegression(**parameters)
+    model.fit(X_scaled, y)
+
+    artifact = {
+        "model": model,
+        "scaler": scaler,
+        "feature_columns": list(X.columns),
+        "parameters": dict(parameters),
+    }
+    artifact_path.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump(artifact, artifact_path)
+
+    print(
+        "Selected parameters: "
+        f"{json.dumps(artifact['parameters'], sort_keys=True)} "
+        f"(test MSE: {best_experiment['test_mean_squared_error']})"
+    )
+    print(f"Saved model artifact to {artifact_path}")
+    return artifact
+
+
 def main() -> None:
     np.random.seed(42)
 
@@ -85,7 +125,8 @@ def main() -> None:
     model_sm = sm.OLS(y_train, X_train_sm).fit()
     print(model_sm.summary())
 
-    run_experiments(X_train_scaled, X_test_scaled, y_train, y_test)
+    results = run_experiments(X_train_scaled, X_test_scaled, y_train, y_test)
+    train_best_model(X, y, results)
 
 print(f"End of training experiments.")
 
