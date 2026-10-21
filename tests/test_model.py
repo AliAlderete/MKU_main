@@ -80,4 +80,5 @@ def test_baseline_pipeline_with_synthetic_data():
 	assert baseline_metrics["test_r_squared"] == round(
 		r2_score(y_test, reg.predict(X_test_scaled)), 4
 	)
+	print("--- End of test_baseline_pipeline_with_synthetic_data ---")
 
