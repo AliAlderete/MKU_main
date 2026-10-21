@@ -60,3 +60,6 @@ baseline_metrics = evaluate_regression_model(reg, X_test_scaled, y_test, name="S
 print("--- Standard Evaluation Output ---")
 for metric, value in baseline_metrics.items():
     print(f"{metric}: {value}")
+
+
+print("--- Testing the triggering of CI actions ---")
