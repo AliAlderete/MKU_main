@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  test-model:
+  auto-run:
     runs-on: ubuntu-24.04
 
     steps:
