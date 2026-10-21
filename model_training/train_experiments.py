@@ -86,6 +86,6 @@ def main() -> None:
 
     run_experiments(X_train_scaled, X_test_scaled, y_train, y_test)
 
-
+print(f"End of training experiments.")
 if __name__ == "__main__":
     main()
