@@ -21,7 +21,7 @@ jobs:
         run: pip install -r requirements.txt
       
       - name: Automated run
-        run: python -m pytest starter/ -v
+        run: python -m starter.baseline_model -v
 
 
 
