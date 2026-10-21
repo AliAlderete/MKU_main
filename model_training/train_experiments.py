@@ -130,7 +130,5 @@ def main() -> None:
 
 print(f"End of training experiments.")
 
-
-
 if __name__ == "__main__":
     main()
