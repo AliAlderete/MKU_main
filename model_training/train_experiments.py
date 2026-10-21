@@ -6,10 +6,9 @@ import pandas as pd
 import seaborn as sns
 import statsmodels.api as sm
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-
-from starter.baseline_model import evaluate_regression_model
 
 
 EXPERIMENTS = (
@@ -32,12 +31,14 @@ def run_experiments(
         model = LinearRegression(**parameters)
         model.fit(X_train, y_train)
 
-        metrics = evaluate_regression_model(
-            model,
-            X_test,
-            y_test,
-            name=f"Experiment {experiment_number}",
-        )
+        predictions = model.predict(X_test)
+        metrics = {
+            "model_name": f"Experiment {experiment_number}",
+            "test_mean_squared_error": round(
+                mean_squared_error(y_test, predictions), 4
+            ),
+            "test_r_squared": round(r2_score(y_test, predictions), 4),
+        }
         result = {
             "experiment": experiment_number,
             "parameters": dict(parameters),
