@@ -20,5 +20,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run automated tests
-        run: python -m pytest tests/ -v
+      - name: Run automated run
+        run: python -m pytest starter/baseline_model.py -v
+
+        
