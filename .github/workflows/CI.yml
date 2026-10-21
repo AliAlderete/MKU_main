@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Get repository code
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -20,9 +22,36 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       
-      - name: Automated run
-        run: python -m starter.baseline_model -v
+      - name: Run changed Python files
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            base="$BASE_SHA"
+          else
+            base="$BEFORE_SHA"
+          fi
 
+          if [[ "$base" =~ ^0+$ ]]; then
+            changed_files="$(git ls-files -- '*.py')"
+          else
+            changed_files="$(git diff --name-only --diff-filter=ACMRT "$base" "$HEAD_SHA" -- '*.py')"
+          fi
 
+          if [[ -z "$changed_files" ]]; then
+            echo "No changed Python files to run."
+            exit 0
+          fi
 
-        
+          while IFS= read -r file; do
+            [[ -n "$file" ]] || continue
+            echo "Running $file"
+            if [[ "$file" == tests/test_*.py || "$file" == tests/*_test.py ]]; then
+              python -m pytest "$file" -v
+            else
+              python "$file"
+            fi
+          done <<< "$changed_files"
