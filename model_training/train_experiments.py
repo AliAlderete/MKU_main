@@ -128,7 +128,7 @@ def main() -> None:
     results = run_experiments(X_train_scaled, X_test_scaled, y_train, y_test)
     train_best_model(X, y, results)
 
-print(f"End of training experiments.")
+print(f"End of training experiments. Thursday")
 
 if __name__ == "__main__":
     main()
